@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<style>
+  
+#timer {
+    font-size: 25px;
+    font-weight: bold;
+	
+}
+#some_div {
+	font-size: 20px;
+    font-weight: bold;
+	color: blue;
+	align: center;
+}
+
+#progress-bar {
+    visibility: visible;
+    width: 80%;
+    margin: 25px auto;
+    border: solid 1px #000;
+    border-radius: 10px;
+}
+
+#progress-bar-inner {
+    height: 15px;
+    border-radius: 10px;	
+    animation: progressbar-countdown;
+    animation-duration: 0s;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-fill-mode: none;
+    animation-play-state: paused;
+    animation-timing-function: linear;
+}
+
+@keyframes progressbar-countdown {
+    0% {
+        width: 100%;
+        background: blue;
+    }
+    100% {
+        width: 0%;
+        background: red;
+    }
+}
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}  
+
+  
+</style>
+<body>
+  
+<p align="center" id="timer"></p>
+<div id="progress-bar">
+    <div id="progress-bar-inner"></div>
+<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+  <table width="100%">
+  <tr >
+    <th><h1 align="left" > &nbsp;&nbsp;&nbsp;Servicing</h1> </th>
+    <th><h1 align="right">Go &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </h1></th>    
+  </tr>
+  </table>
+
+</div>
+<button onclick="startTimerAndProgressbar()" id="start-btn">Start</button>
+<button onclick="pauseTimerAndProgressbar()" id="pause-btn">Pause</button>
+<button onclick="resumeTimerAndProgressbar()" id="resume-btn" disabled>Resume</button>
+ 
+<div  id="some_div" >
+</div>
+
+ 
+<script type="text/javascript">
+ 
+var timer = null;
+var timePassed;
+var TIME_LIMIT;
+var timeLeftCounter;
+
+var timeLeftCounter = 5;
+    var elem = document.getElementById('some_div');
+    
+    var timerId = setInterval(countdown, 1000);
+    
+    function countdown() {
+      if (timeLeftCounter == 0) {
+        clearTimeout(timerId);
+		elem.innerHTML = timeLeftCounter + ' seconds remaining';
+		startTimerAndProgressbar();
+        doSomething();
+		
+      } else {
+        elem.innerHTML = timeLeftCounter + ' seconds remaining';
+        timeLeftCounter--;
+      }
+	  
+	 
+    }
+	
+	
+function startTimerAndProgressbar() {
+    timePassed = 0;
+    TIME_LIMIT = 5;
+    timeLeft = TIME_LIMIT;
+    
+    startTimer();
+    initializeProgressBar()
+    startProgressBar()
+}
+
+function pauseTimerAndProgressbar() {
+    clearInterval(timer);
+    pauseProgressBar();
+    id("pause-btn").disabled = true;
+    id("resume-btn").disabled = false;
+}
+
+function resumeTimerAndProgressbar() {
+    startTimer();
+    resumeProgressBar();
+    id("pause-btn").disabled = false;
+    id("resume-btn").disabled = true;
+}
+
+
+/* HELPER FUNCTION */
+function id(id) {
+    return document.getElementById(id);
+}
+
+
+/* PROGRESS BAR */
+function initializeProgressBar() {
+    resetProgressBar();
+    id("progress-bar").style.visibility = "visible";
+    id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
+    id("progress-bar-inner").style.animationPlayState = "paused";
+}
+
+function startProgressBar() {
+    id("progress-bar-inner").style.animationPlayState = 'running';
+}
+
+function pauseProgressBar() {
+    id("progress-bar-inner").style.animationPlayState = 'paused';
+}
+
+function resumeProgressBar() {
+    id("progress-bar-inner").style.animationPlayState = 'running';
+}
+
+function initializeProgressBar() {
+    resetProgressBar();
+    id("progress-bar").style.visibility = "visible";
+    id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
+    id("progress-bar-inner").style.animationPlayState = "paused";
+}
+
+function resetProgressBar() {
+    var element = id('progress-bar-inner');
+    element.style.animation = 'none';
+    element.offsetHeight; /* trigger a DOM reflow */
+    element.style.animation = null;
+}
+
+function startTimer() {
+    id("timer").textContent = formatTime(timeLeft);
+    timer = setInterval(function() {
+        timePassed = timePassed += 1;
+        timeLeft = TIME_LIMIT - timePassed;
+        id("timer").textContent = formatTime(timeLeft);
+        if (timeLeft == 0) { clearTimeout(timer); }
+    }, 1000);
+}
+
+/* TIMER */
+function startTimer() {
+    id("timer").textContent = formatTime(timeLeft);
+    timer = setInterval(function() {
+        timePassed = timePassed += 1;
+        timeLeft = TIME_LIMIT - timePassed;
+        id("timer").textContent = formatTime(timeLeft);
+        if (timeLeft == 0) { clearTimeout(timer); }
+    }, 1000);
+}
+
+function formatTime(time) {
+    var m = Math.floor(time / 60);
+    var s = time % 60;
+    m = (m < 10) ? ("0" + m) : m;
+    s = (s < 10) ? ("0" + s) : s;
+    return `${m}:${s}`;
+}
+
+function startTimer1(){
+  var counter = 5;
+  setInterval(function() {
+    counter--;
+    if (counter >= 0) {
+      span = document.getElementById("count");
+      span.innerHTML = counter;
+    }
+    if (counter === 0) {
+        alert('sorry, out of time');
+        clearInterval(counter);
+    }
+  }, 1000);
+}
+function start()
+{
+    document.getElementById("count").style="color:green;";
+    startTimer1();
+}; 
+
+
+</script>
+  
+  
+</body>
+</html>
