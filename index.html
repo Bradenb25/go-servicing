@@ -1,255 +1,383 @@
 <!DOCTYPE html>
 <html>
-<style>
-  
-#timer {
-    font-size: 25px;
-    font-weight: bold;
-	
-}
-#some_div {
-	font-size: 20px;
-    font-weight: bold;
-	color: blue;
-	align: center;
-}
 
-#progress-bar {
-    visibility: visible;
-    width: 80%;
-    margin: 25px auto;
-    border: solid 1px #000;
-    border-radius: 10px;
-}
+<head>
+    <script type="text/javascript">
 
-#progress-bar-inner {
-    height: 15px;
-    border-radius: 10px;	
-    animation: progressbar-countdown;
-    animation-duration: 0s;
-    animation-delay: 0s;
-    animation-iteration-count: 1;
-    animation-fill-mode: none;
-    animation-play-state: paused;
-    animation-timing-function: linear;
-}
+        var timer = null;
+        var timePassed;
+        var TIME_LIMIT;
+        var timeLeftCounter;
+        var confettiFired = false;
 
-@keyframes progressbar-countdown {
-    0% {
-        width: 100%;
-        background: blue;
-    }
-    100% {
-        width: 0%;
-        background: red;
-    }
-}
+        var timeLeftCounter = 5;
+        var elem = document.getElementById('seconds_remaining');
 
-.slidecontainer {
-  width: 100%;
-}
+        function startTimerAndProgressbar() {
+            timePassed = 0;
+            TIME_LIMIT = 5;
+            timeLeft = TIME_LIMIT;
 
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 25px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
+            // if (timer != null) {
+            //     stopTimer();
+            // }
 
-.slider:hover {
-  opacity: 1;
-}
+            startTimer();
+            initializeProgressBar()
+            startProgressBar()
+        }
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #04AA6D;
-  cursor: pointer;
-}
+        function stopTimer() {
+            clearInterval(timer);
+            timer = null;
+        }
 
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: #04AA6D;
-  cursor: pointer;
-}  
+        function pauseTimerAndProgressbar() {
+            stopTimer();
+            pauseProgressBar();
+            id("pause-btn").disabled = true;
+            id("resume-btn").disabled = false;
+        }
 
-  
-</style>
+        function resumeTimerAndProgressbar() {
+            startTimer();
+            resumeProgressBar();
+            id("pause-btn").disabled = false;
+            id("resume-btn").disabled = true;
+        }
+
+
+        /* HELPER FUNCTION */
+        function id(id) {
+            return document.getElementById(id);
+        }
+
+
+        /* PROGRESS BAR */
+        function initializeProgressBar() {
+            resetProgressBar();
+            id("progress-bar").style.visibility = "visible";
+            id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
+            id("progress-bar-inner").style.animationPlayState = "paused";
+        }
+
+        function startProgressBar() {
+            id("progress-bar-inner").style.animationPlayState = 'running';
+        }
+
+        function pauseProgressBar() {
+            id("progress-bar-inner").style.animationPlayState = 'paused';
+        }
+
+        function resumeProgressBar() {
+            id("progress-bar-inner").style.animationPlayState = 'running';
+        }
+
+        function initializeProgressBar() {
+            resetProgressBar();
+            id("progress-bar").style.visibility = "visible";
+            id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
+            id("progress-bar-inner").style.animationPlayState = "paused";
+        }
+
+        function resetProgressBar() {
+            var element = id('progress-bar-inner');
+            element.style.animation = 'none';
+            element.offsetHeight; /* trigger a DOM reflow */
+            element.style.animation = null;
+        }
+
+        /* TIMER */
+        function startTimer() {
+            id("timer").textContent = formatTime(timeLeft);
+            clearInterval(timer)
+            timer = setInterval(function () {
+                timePassed = timePassed += 1;
+                timeLeft = TIME_LIMIT - timePassed;
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    id("timer").textContent = formatTime(0);
+                    if (!confettiFired) {
+                        confettiFired = true;
+                        render();
+                        initConfetti();
+                        initConfetti();
+                    }
+                } else {
+                    id("timer").textContent = formatTime(timeLeft);
+                }
+            }, 1000);
+        }
+
+        function formatTime(time) {
+            var m = Math.floor(time / 60);
+            var s = time % 60;
+            m = (m < 10) ? ("0" + m) : m;
+            s = (s < 10) ? ("0" + s) : s;
+            return `${m}:${s}`;
+        }
+
+    </script>
+    <style>
+        #timer {
+            font-size: 25px;
+            font-weight: bold;
+
+        }
+
+        #seconds_remaining {
+            font-size: 20px;
+            font-weight: bold;
+            color: blue;
+            align: center;
+        }
+
+        #progress-bar {
+            visibility: visible;
+            width: 80%;
+            margin: 25px auto;
+            border: solid 1px #000;
+            border-radius: 10px;
+        }
+
+        #progress-bar-inner {
+            height: 15px;
+            border-radius: 10px;
+            animation: progressbar-countdown;
+            animation-duration: 0s;
+            animation-delay: 0s;
+            animation-iteration-count: 1;
+            animation-fill-mode: none;
+            animation-play-state: paused;
+            animation-timing-function: linear;
+        }
+
+        @keyframes progressbar-countdown {
+            0% {
+                width: 100%;
+                background: blue;
+            }
+
+            100% {
+                width: 0%;
+                background: red;
+            }
+        }
+
+        .slidecontainer {
+            width: 100%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        .confetti {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            user-select: none;
+        }
+
+        #container {
+            position: relative;
+        }
+
+        #container canvas,
+        #bar-container {
+            position: absolute;
+            width: 100%;
+        }
+    </style>
+</head>
+
+
 <body>
-  
-<p align="center" id="timer"></p>
-<div id="progress-bar">
-    <div id="progress-bar-inner"></div>
-<div class="slidecontainer">
-  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-  <table width="100%">
-  <tr >
-    <th><h1 align="left" > &nbsp;&nbsp;&nbsp;Servicing</h1> </th>
-    <th><h1 align="right">Go &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </h1></th>    
-  </tr>
-  </table>
 
-</div>
-<button onclick="startTimerAndProgressbar()" id="start-btn">Start</button>
-<button onclick="pauseTimerAndProgressbar()" id="pause-btn">Pause</button>
-<button onclick="resumeTimerAndProgressbar()" id="resume-btn" disabled>Resume</button>
- 
-<div  id="some_div" >
-</div>
+    <div id="container">
+        <canvas class="confetti" id="canvas"></canvas>
+        <div id="bar-container">
+            <p align="center" id="timer"></p>
+            <div id="progress-bar">
+                <div id="progress-bar-inner"></div>
+                <div class="slidecontainer">
+                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                    <table width="100%">
+                        <tr>
+                            <th>
+                                <h1 align="left"> &nbsp;&nbsp;&nbsp;Servicing</h1>
+                            </th>
+                            <th>
+                                <h1 align="right">Go &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </h1>
+                            </th>
+                        </tr>
+                    </table>
 
- 
-<script type="text/javascript">
- 
-var timer = null;
-var timePassed;
-var TIME_LIMIT;
-var timeLeftCounter;
+                </div>
+                <button onclick="startTimerAndProgressbar()" id="start-btn">Start</button>
+                <button onclick="pauseTimerAndProgressbar()" id="pause-btn">Pause</button>
+                <button onclick="resumeTimerAndProgressbar()" id="resume-btn" disabled>Resume</button>
 
-var timeLeftCounter = 5;
-    var elem = document.getElementById('some_div');
-    
-    var timerId = setInterval(countdown, 1000);
-    
-    function countdown() {
-      if (timeLeftCounter == 0) {
-        clearTimeout(timerId);
-		elem.innerHTML = timeLeftCounter + ' seconds remaining';
-		startTimerAndProgressbar();
-        doSomething();
-		
-      } else {
-        elem.innerHTML = timeLeftCounter + ' seconds remaining';
-        timeLeftCounter--;
-      }
-	  
-	 
-    }
-	
-	
-function startTimerAndProgressbar() {
-    timePassed = 0;
-    TIME_LIMIT = 5;
-    timeLeft = TIME_LIMIT;
-    
-    startTimer();
-    initializeProgressBar()
-    startProgressBar()
-}
-
-function pauseTimerAndProgressbar() {
-    clearInterval(timer);
-    pauseProgressBar();
-    id("pause-btn").disabled = true;
-    id("resume-btn").disabled = false;
-}
-
-function resumeTimerAndProgressbar() {
-    startTimer();
-    resumeProgressBar();
-    id("pause-btn").disabled = false;
-    id("resume-btn").disabled = true;
-}
+                <div id="seconds_remaining">
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-/* HELPER FUNCTION */
-function id(id) {
-    return document.getElementById(id);
-}
-
-
-/* PROGRESS BAR */
-function initializeProgressBar() {
-    resetProgressBar();
-    id("progress-bar").style.visibility = "visible";
-    id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
-    id("progress-bar-inner").style.animationPlayState = "paused";
-}
-
-function startProgressBar() {
-    id("progress-bar-inner").style.animationPlayState = 'running';
-}
-
-function pauseProgressBar() {
-    id("progress-bar-inner").style.animationPlayState = 'paused';
-}
-
-function resumeProgressBar() {
-    id("progress-bar-inner").style.animationPlayState = 'running';
-}
-
-function initializeProgressBar() {
-    resetProgressBar();
-    id("progress-bar").style.visibility = "visible";
-    id("progress-bar-inner").style.animationDuration = TIME_LIMIT + "s";
-    id("progress-bar-inner").style.animationPlayState = "paused";
-}
-
-function resetProgressBar() {
-    var element = id('progress-bar-inner');
-    element.style.animation = 'none';
-    element.offsetHeight; /* trigger a DOM reflow */
-    element.style.animation = null;
-}
-
-function startTimer() {
-    id("timer").textContent = formatTime(timeLeft);
-    timer = setInterval(function() {
-        timePassed = timePassed += 1;
-        timeLeft = TIME_LIMIT - timePassed;
-        id("timer").textContent = formatTime(timeLeft);
-        if (timeLeft == 0) { clearTimeout(timer); }
-    }, 1000);
-}
-
-/* TIMER */
-function startTimer() {
-    id("timer").textContent = formatTime(timeLeft);
-    timer = setInterval(function() {
-        timePassed = timePassed += 1;
-        timeLeft = TIME_LIMIT - timePassed;
-        id("timer").textContent = formatTime(timeLeft);
-        if (timeLeft == 0) { clearTimeout(timer); }
-    }, 1000);
-}
-
-function formatTime(time) {
-    var m = Math.floor(time / 60);
-    var s = time % 60;
-    m = (m < 10) ? ("0" + m) : m;
-    s = (s < 10) ? ("0" + s) : s;
-    return `${m}:${s}`;
-}
-
-function startTimer1(){
-  var counter = 5;
-  setInterval(function() {
-    counter--;
-    if (counter >= 0) {
-      span = document.getElementById("count");
-      span.innerHTML = counter;
-    }
-    if (counter === 0) {
-        alert('sorry, out of time');
-        clearInterval(counter);
-    }
-  }, 1000);
-}
-function start()
-{
-    document.getElementById("count").style="color:green;";
-    startTimer1();
-}; 
-
-
-</script>
-  
-  
 </body>
+
+<script>
+    // CONFETTI
+    //-----------Var Inits--------------
+    canvas = document.getElementById("canvas");
+    ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cx = ctx.canvas.width / 2;
+    cy = ctx.canvas.height / 2;
+
+    let confetti = [];
+    const confettiCount = 300;
+    const gravity = 0.5;
+    const terminalVelocity = 5;
+    const drag = 0.075;
+    const colors = [
+        { front: 'red', back: 'darkred' },
+        { front: 'green', back: 'darkgreen' },
+        { front: 'blue', back: 'darkblue' },
+        { front: 'yellow', back: 'darkyellow' },
+        { front: 'orange', back: 'darkorange' },
+        { front: 'pink', back: 'darkpink' },
+        { front: 'purple', back: 'darkpurple' },
+        { front: 'turquoise', back: 'darkturquoise' }];
+
+
+    //-----------Functions--------------
+    resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cx = ctx.canvas.width / 2;
+        cy = ctx.canvas.height / 2;
+    };
+
+    randomRange = (min, max) => Math.random() * (max - min) + min;
+
+    initConfetti = () => {
+        for (let i = 0; i < confettiCount; i++) {
+            confetti.push({
+                color: colors[Math.floor(randomRange(0, colors.length))],
+                dimensions: {
+                    x: randomRange(10, 20),
+                    y: randomRange(10, 30)
+                },
+
+                position: {
+                    x: randomRange(0, canvas.width),
+                    y: canvas.height - 1
+                },
+
+                rotation: randomRange(0, 2 * Math.PI),
+                scale: {
+                    x: 1,
+                    y: 1
+                },
+
+                velocity: {
+                    x: randomRange(-25, 25),
+                    y: randomRange(0, -50)
+                }
+            });
+
+
+        }
+    };
+
+    //---------Render-----------
+    render = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        confetti.forEach((confetto, index) => {
+            let width = confetto.dimensions.x * confetto.scale.x;
+            let height = confetto.dimensions.y * confetto.scale.y;
+
+            // Move canvas to position and rotate
+            ctx.translate(confetto.position.x, confetto.position.y);
+            ctx.rotate(confetto.rotation);
+
+            // Apply forces to velocity
+            confetto.velocity.x -= confetto.velocity.x * drag;
+            confetto.velocity.y = Math.min(confetto.velocity.y + gravity, terminalVelocity);
+            confetto.velocity.x += Math.random() > 0.5 ? Math.random() : -Math.random();
+
+            // Set position
+            confetto.position.x += confetto.velocity.x;
+            confetto.position.y += confetto.velocity.y;
+
+            // Delete confetti when out of frame
+            if (confetto.position.y >= canvas.height) confetti.splice(index, 1);
+
+            // Loop confetto x position
+            if (confetto.position.x > canvas.width) confetto.position.x = 0;
+            if (confetto.position.x < 0) confetto.position.x = canvas.width;
+
+            // Spin confetto by scaling y
+            confetto.scale.y = Math.cos(confetto.position.y * 0.1);
+            ctx.fillStyle = confetto.scale.y > 0 ? confetto.color.front : confetto.color.back;
+
+            // Draw confetti
+            ctx.fillRect(-width / 2, -height / 2, width, height);
+
+            // Reset transform matrix
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        });
+
+        // Fire off another round of confetti
+        //if (confetti.length <= 10) initConfetti();
+
+        window.requestAnimationFrame(render);
+    };
+
+    //---------Execution--------
+    initConfetti();
+    //render();
+
+    //----------Resize----------
+    window.addEventListener('resize', function () {
+        resizeCanvas();
+    });
+
+    //------------Click------------
+    window.addEventListener('click', function () {
+        //initConfetti();
+    });
+</script>
+
 </html>
