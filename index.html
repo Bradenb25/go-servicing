@@ -89,6 +89,7 @@
 
         /* TIMER */
         function startTimer() {
+            confettiFired = false;
             id("timer").textContent = formatTime(timeLeft);
             clearInterval(timer)
             timer = setInterval(function () {
@@ -99,9 +100,10 @@
                     id("timer").textContent = formatTime(0);
                     if (!confettiFired) {
                         confettiFired = true;
-                        render();
-                        initConfetti();
-                        initConfetti();
+                        //render();
+                        initConfetti(canvas.width / 2);
+                        initConfetti(canvas.width / 4);
+                        initConfetti(canvas.width / 1.33);
                     }
                 } else {
                     id("timer").textContent = formatTime(timeLeft);
@@ -290,7 +292,7 @@
 
     randomRange = (min, max) => Math.random() * (max - min) + min;
 
-    initConfetti = () => {
+    initConfetti = (xPos) => {
         for (let i = 0; i < confettiCount; i++) {
             confetti.push({
                 color: colors[Math.floor(randomRange(0, colors.length))],
@@ -300,7 +302,7 @@
                 },
 
                 position: {
-                    x: randomRange(0, canvas.width),
+                    x: xPos, //canvas.width / 2,
                     y: canvas.height - 1
                 },
 
@@ -366,8 +368,8 @@
     };
 
     //---------Execution--------
-    initConfetti();
-    //render();
+    //initConfetti();
+    render();
 
     //----------Resize----------
     window.addEventListener('resize', function () {
