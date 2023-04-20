@@ -21,10 +21,25 @@
             // if (timer != null) {
             //     stopTimer();
             // }
+            displayCountDown();
+            setTimeout(() => {
+                startTimer();
+                initializeProgressBar();
+                startProgressBar();
+            }, 3000);
+        }
 
-            startTimer();
-            initializeProgressBar()
-            startProgressBar()
+        function displayCountDown() {
+            id("count-down").innerText = 3;
+            setTimeout(() => {
+                id("count-down").innerText = 2;
+                setTimeout(() => {
+                    id("count-down").innerText = 1;
+                    setTimeout(() => {
+                        id("count-down").innerText = '';
+                    }, 1000);
+                }, 1000);
+            }, 1000);
         }
 
         function stopTimer() {
@@ -217,12 +232,31 @@
             position: absolute;
             width: 100%;
         }
+
+        #count-down {
+            position: absolute;
+            z-index: 1000;
+            top: 20%;
+            left: 48%;
+            font-size: 240px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #background-overlay {
+            height: 100%;
+            width: 100%;
+        }
     </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
 </head>
 
 
 <body>
-
+    <div id="background-overlay"></div>
+    <div id="count-down"></div>
     <div id="container">
         <canvas class="confetti" id="canvas"></canvas>
         <div id="bar-container">
